@@ -1,0 +1,44 @@
+{
+  "node": {
+    "callsign": "ALPHA-1",
+    "unit": "1ST PLT",
+    "rank": "SGT", 
+    "role": "TEAM_LEADER",
+    "clearance_level": 3
+  },
+  "network": {
+    "batman_enabled": true,
+    "batman_interface": "bat0",
+    "lora_enabled": false,
+    "lora_port": "/dev/ttyUSB0",
+    "lora_baudrate": 115200,
+    "mesh_port": 47474
+  },
+  "security": {
+    "encryption_enabled": true,
+    "key_rotation_interval": 3600,
+    "max_message_age": 300
+  },
+  "gps": {
+    "enabled": true,
+    "device": "/dev/ttyACM0",
+    "update_interval": 30,
+    "default_position": {
+      "lat": 37.7749,
+      "lon": -122.4194,
+      "alt": 50.0
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "max_file_size": "10MB",
+    "backup_count": 5
+  },
+  "web_interface": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "ssl_enabled": false,
+    "ssl_cert": "/opt/tactimesh/ssl/cert.pem",
+    "ssl_key": "/opt/tactimesh/ssl/key.pem"
+  }
+}
