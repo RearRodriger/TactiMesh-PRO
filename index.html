@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TactiMesh - Military Mesh Network System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Classification Banner -->
+    <div class="classification-banner">
+        <span>UNCLASSIFIED</span>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <h1>TactiMesh</h1>
+                <span class="version">v2.1.4</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="mission-status">
+                <span class="mission-name">OPERATION WATCHDOG</span>
+                <div class="mission-time" id="missionTime"></div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="network-indicators">
+                <div class="indicator">
+                    <span class="indicator-label">NODES</span>
+                    <span class="indicator-value" id="nodeCount">6</span>
+                </div>
+                <div class="indicator">
+                    <span class="indicator-label">MESH</span>
+                    <span class="indicator-status active" id="meshStatus">ACTIVE</span>
+                </div>
+                <div class="indicator">
+                    <span class="indicator-label">CRYPTO</span>
+                    <span class="indicator-status secure" id="cryptoStatus">SECURE</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Left Panel - Tactical Map -->
+        <div class="left-panel">
+            <div class="panel-header">
+                <h3>TACTICAL OVERVIEW</h3>
+                <div class="map-controls">
+                    <button class="map-btn" id="zoomIn">+</button>
+                    <button class="map-btn" id="zoomOut">-</button>
+                    <button class="map-btn" id="centerMap">⌂</button>
+                </div>
+            </div>
+            <div class="tactical-map" id="tacticalMap">
+                <svg id="mapSvg" width="100%" height="100%">
+                    <!-- Map background -->
+                    <rect class="map-background" width="100%" height="100%"></rect>
+                    <!-- Grid lines -->
+                    <defs>
+                        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a3d2a" stroke-width="0.5"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#grid)" opacity="0.3"/>
+                    <!-- Geofences -->
+                    <g id="geofenceLayer"></g>
+                    <!-- Mesh connections -->
+                    <g id="meshLayer"></g>
+                    <!-- Nodes -->
+                    <g id="nodeLayer"></g>
+                </svg>
+                <div class="map-overlay">
+                    <div class="coordinates" id="coordinates">32T 0000 0000</div>
+                </div>
+            </div>
+            <div class="map-legend">
+                <div class="legend-item">
+                    <span class="legend-color friendly"></span>
+                    <span>Friendly Forces</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color mesh"></span>
+                    <span>Mesh Connections</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color restricted"></span>
+                    <span>Restricted Zone</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Control Interface -->
+        <div class="right-panel">
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="network">NETWORK</button>
+                <button class="tab-btn" data-tab="messaging">COMMS</button>
+                <button class="tab-btn" data-tab="tracker">BFT</button>
+                <button class="tab-btn" data-tab="intel">INTEL</button>
+                <button class="tab-btn" data-tab="system">SYSTEM</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Network Status Tab -->
+                <div class="tab-panel active" id="networkTab">
+                    <div class="panel-section">
+                        <h4>ACTIVE NODES</h4>
+                        <div class="node-list" id="nodeList"></div>
+                    </div>
+                    <div class="panel-section">
+                        <h4>MESH TOPOLOGY</h4>
+                        <div class="topology-stats">
+                            <div class="stat">
+                                <span class="stat-label">Connections:</span>
+                                <span class="stat-value" id="connectionCount">12</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Avg Latency:</span>
+                                <span class="stat-value" id="avgLatency">45ms</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Network Health:</span>
+                                <span class="stat-value green" id="networkHealth">EXCELLENT</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messaging Tab -->
+                <div class="tab-panel" id="messagingTab">
+                    <div class="message-compose">
+                        <div class="compose-header">
+                            <select id="messageSender" class="compose-select">
+                                <option value="ALPHA-1">ALPHA-1 (Self)</option>
+                            </select>
+                            <select id="messageRecipient" class="compose-select">
+                                <option value="ALL">ALL STATIONS</option>
+                            </select>
+                        </div>
+                        <div class="compose-controls">
+                            <select id="messageType" class="compose-select">
+                                <option value="COMMAND">COMMAND</option>
+                                <option value="INTEL">INTEL</option>
+                                <option value="SITREP">SITREP</option>
+                                <option value="MEDICAL">MEDICAL</option>
+                                <option value="LOGISTICS">LOGISTICS</option>
+                            </select>
+                            <select id="messagePriority" class="compose-select">
+                                <option value="3">ROUTINE</option>
+                                <option value="2">PRIORITY</option>
+                                <option value="1">IMMEDIATE</option>
+                                <option value="0">FLASH</option>
+                            </select>
+                        </div>
+                        <textarea id="messageContent" class="message-input" placeholder="Enter tactical message..."></textarea>
+                        <button id="sendMessage" class="btn-primary">SEND MESSAGE</button>
+                    </div>
+                    <div class="message-history">
+                        <h4>MESSAGE TRAFFIC</h4>
+                        <div class="message-list" id="messageList"></div>
+                    </div>
+                </div>
+
+                <!-- Blue Force Tracker Tab -->
+                <div class="tab-panel" id="trackerTab">
+                    <div class="panel-section">
+                        <h4>UNIT POSITIONS</h4>
+                        <div class="unit-list" id="unitList"></div>
+                    </div>
+                </div>
+
+                <!-- Intelligence Tab -->
+                <div class="tab-panel" id="intelTab">
+                    <div class="panel-section">
+                        <h4>SITUATION REPORTS</h4>
+                        <div class="intel-list" id="intelList">
+                            <div class="intel-item alert">
+                                <div class="intel-header">
+                                    <span class="intel-type">THREAT</span>
+                                    <span class="intel-time">19:45Z</span>
+                                </div>
+                                <div class="intel-content">Enemy movement detected in Sector 7-G. Estimated 3-5 personnel.</div>
+                            </div>
+                            <div class="intel-item info">
+                                <div class="intel-header">
+                                    <span class="intel-type">RECON</span>
+                                    <span class="intel-time">19:30Z</span>
+                                </div>
+                                <div class="intel-content">Area of operations clear. No hostile activity observed.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status Tab -->
+                <div class="tab-panel" id="systemTab">
+                    <div class="panel-section">
+                        <h4>PERFORMANCE METRICS</h4>
+                        <div class="metrics-grid">
+                            <div class="metric">
+                                <div class="metric-label">CPU Usage</div>
+                                <div class="metric-value">23%</div>
+                                <div class="metric-bar">
+                                    <div class="metric-fill" style="width: 23%"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Memory</div>
+                                <div class="metric-value">67%</div>
+                                <div class="metric-bar">
+                                    <div class="metric-fill" style="width: 67%"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Battery</div>
+                                <div class="metric-value">89%</div>
+                                <div class="metric-bar">
+                                    <div class="metric-fill" style="width: 89%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-section">
+                        <h4>DIAGNOSTICS</h4>
+                        <div class="diagnostic-log">
+                            <div class="log-entry">[20:00:15] Mesh network synchronization complete</div>
+                            <div class="log-entry">[20:00:08] Node BRAVO-2 position updated</div>
+                            <div class="log-entry">[19:59:45] Encryption key rotation successful</div>
+                            <div class="log-entry">[19:59:30] All nodes reporting nominal status</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Node Details Modal -->
+    <div class="modal" id="nodeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">NODE DETAILS</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
